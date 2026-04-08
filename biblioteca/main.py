@@ -6,6 +6,7 @@
 
 from fastapi import FastAPI
 from uuid import UUID
+from datetime import date
 
 from models import Usuario, Livro, Emprestimo, LivroUpdate, UsuarioUpdate
 
@@ -18,7 +19,6 @@ app = FastAPI()
 
 @app.get("/livro")
 def listar_livros():
-    # nao msotra livros emprestados
     livros_disponiveis = []
 
     for livro in livros:
@@ -63,7 +63,43 @@ def atualizar_livro(id: UUID, livroUpdate: LivroUpdate):
                 livro.status = livroUpdate.status
 
             return livro
-        
+
+@app.post("/livro/alocar")
+def alocar_livro(emprestimo: Emprestimo):
+    for usuario in usuarios:
+        if emprestimo.usuario_id == usuario.id:
+            for livro in livros:
+                if livro.id == emprestimo.livro_id:
+                    if livro.status != "Indisponível":
+                        emprestimos.append(emprestimo)
+                        livro.status = "Indisponível"
+
+                    return emprestimo
+            return {"mensagem": "Livro não existe"}
+    return {"mensagem": "Usuário não existe"}
+    
+
+@app.get("/livros/emprestados")
+def listar_livros_emprestados():
+    livros_emprestados: list[Livro] = []
+
+    for emprestimo in emprestimos:
+        for livro in livros:
+            if livro.id == emprestimo.livro_id:
+                livros_emprestados.append(livro)
+    
+    return livros_emprestados
+
+@app.get("/emprestimos/atrasados")
+def listar_emprestimos_atrasados():
+    emprestimos_atrasados: list[Emprestimo] = []
+
+    for emprestimo in emprestimos:
+        if not emprestimo.devolvido and emprestimo.data_devolucao < date.today():
+            emprestimos_atrasados.append(emprestimo)
+
+    return emprestimos_atrasados
+
 @app.get("/usuario")
 def listar_usuarios():
     return usuarios
@@ -95,3 +131,4 @@ def atualizar_usuario(id: UUID, usuarioUpdate: UsuarioUpdate):
                 usuario.senha = usuarioUpdate.senha
                 
             return usuario
+        

@@ -1,7 +1,13 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 from uuid import uuid4, UUID
-from datetime import date
+from datetime import date, timedelta
+
+def devolucao_factory():
+    hoje = date.today()
+    data_devolucao = hoje + timedelta(days=14)
+
+    return data_devolucao
 
 class Entidade(BaseModel):
     id: UUID = Field(default_factory=uuid4)
@@ -36,6 +42,7 @@ class LivroUpdate(BaseModel):
     status: Optional[str] = None
 
 class Emprestimo(Entidade):
-    usuario_id: str
-    livro_id: str
-    data_devolucao: date
+    usuario_id: UUID
+    livro_id: UUID
+    data_devolucao: date = Field(default_factory=devolucao_factory)
+    devolvido: bool = False
