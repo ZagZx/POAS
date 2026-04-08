@@ -7,7 +7,7 @@
 from fastapi import FastAPI
 from uuid import UUID
 
-from models import Usuario, Livro, Emprestimo
+from models import Usuario, Livro, Emprestimo, LivroUpdate, UsuarioUpdate
 
 
 usuarios: list[Usuario] = []
@@ -43,11 +43,25 @@ def deletar_livro(id: UUID):
         
     return {"mensagem": "Livro não encontrado"}
 
-@app.put("/livro/<id>")
-def atualizar_livro(id: UUID, livro: Livro):
+@app.patch("/livro/<id>")
+def atualizar_livro(id: UUID, livroUpdate: LivroUpdate):
     for livro in livros:
         if livro.id == id:
-            livro = livro
+            if livroUpdate.isbn and livroUpdate.isbn != livro.isbn:
+                livro.isbn = livroUpdate.isbn
+            if livroUpdate.titulo and livroUpdate.titulo != livro.titulo:
+                livro.titulo = livroUpdate.titulo
+            if livroUpdate.descricao and livroUpdate.descricao != livro.descricao:
+                livro.descricao = livroUpdate.descricao
+            if livroUpdate.editora and livroUpdate.editora != livro.editora:
+                livro.editora = livroUpdate.editora
+            if livroUpdate.autor and livroUpdate.autor != livro.autor:
+                livro.autor = livroUpdate.autor
+            if livroUpdate.ano_publicacao and livroUpdate.ano_publicacao != livro.ano_publicacao:
+                livro.ano_publicacao = livroUpdate.ano_publicacao
+            if livroUpdate.status and livroUpdate.status != livro.status:
+                livro.status = livroUpdate.status
+
             return livro
         
 @app.get("/usuario")
@@ -69,3 +83,15 @@ def deletar_usuario(id: UUID):
         
     return {"mensagem": "Usuário não encontrado"}
     
+@app.patch("/usuario/<id>")
+def atualizar_usuario(id: UUID, usuarioUpdate: UsuarioUpdate):
+    for usuario in usuarios:
+        if usuario.id == id:
+            if usuarioUpdate.nome and usuarioUpdate.nome != usuario.nome:
+                usuario.nome = usuarioUpdate.nome
+            if usuarioUpdate.email and usuarioUpdate.email != usuario.email:
+                usuario.email = usuarioUpdate.email
+            if usuarioUpdate.senha and usuarioUpdate.senha != usuario.senha:
+                usuario.senha = usuarioUpdate.senha
+                
+            return usuario
