@@ -4,3 +4,10 @@ from .usuario import (
     UsuarioRead,
     UsuarioUpdate
 )
+
+from .papel import (
+    Papel,
+    PapelCreate,
+    PapelRead,
+    PapelUpdate
+)
