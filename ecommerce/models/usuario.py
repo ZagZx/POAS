@@ -19,9 +19,9 @@ class UsuarioCreate(SQLModel):
     senha: str = Field(max_length=50)
 
 class UsuarioUpdate(SQLModel):
-    nome: Optional[str] = Field(max_length=100)
-    email: Optional[EmailStr] = Field(max_length=150)
-    senha: Optional[str] = Field(max_length=50)
+    nome: Optional[str] = Field(default=None, max_length=100)
+    email: Optional[EmailStr] = Field(default=None, max_length=150)
+    senha: Optional[str] = Field(default=None, max_length=50)
 
 class UsuarioRead(SQLModel):
     id: int

@@ -25,6 +25,15 @@ def listar_usuarios(session: SessionDep):
 
     return usuarios
 
+@usuario_router.get("/{usuario_id}", response_model=UsuarioRead)
+def buscar_usuario(usuario_id: int, session: SessionDep):
+    usuario: Usuario = session.get(Usuario, usuario_id)
+
+    if not usuario:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Usuário não encontrado")
+    
+    return usuario
+
 @usuario_router.post("", response_model=UsuarioRead, status_code=status.HTTP_201_CREATED)
 def criar_usuario(usuario_json: UsuarioCreate, session: SessionDep):
     usuario_existente = session.exec(
@@ -55,8 +64,8 @@ def criar_usuario(usuario_json: UsuarioCreate, session: SessionDep):
         
         return HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Erro ao criar usuário")
 
-@usuario_router.patch("/{id}", response_model=UsuarioRead)
-def atualizar_usuario(id: int, usuario_json: UsuarioUpdate, session: SessionDep):
+@usuario_router.patch("/{usuario_id}", response_model=UsuarioRead)
+def atualizar_usuario(usuario_id: int, usuario_json: UsuarioUpdate, session: SessionDep):
     usuario_existente = session.exec(
         select(Usuario).where((Usuario.email == usuario_json.email) | (Usuario.nome == usuario_json.nome))
     ).first()
@@ -67,7 +76,7 @@ def atualizar_usuario(id: int, usuario_json: UsuarioUpdate, session: SessionDep)
         if usuario_existente.email == usuario_json.email:
             raise HTTPException(status.HTTP_409_CONFLICT, "Já existe um usuário com esse email")
         
-    usuario = session.get(Usuario, id)
+    usuario = session.get(Usuario, usuario_id)
     if not usuario:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
     
@@ -88,3 +97,18 @@ def atualizar_usuario(id: int, usuario_json: UsuarioUpdate, session: SessionDep)
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Erro ao atualizar usuário")
 
     return usuario
+
+@usuario_router.delete("/{usuario_id}", status_code=status.HTTP_204_NO_CONTENT)
+def deletar_usuario(usuario_id: int, session: SessionDep):
+    usuario = session.get(Usuario, usuario_id)
+
+    if not usuario:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Usuário não encontrado")
+   
+    session.delete(usuario)
+
+    try:
+        session.commit()
+    except Exception as e:
+        print(e)
+        session.rollback()
