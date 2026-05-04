@@ -2,17 +2,20 @@ from sqlmodel import create_engine,Session
 from fastapi import Depends
 from typing import Annotated
 from sqlalchemy import URL
+from os import getenv
+from dotenv import load_dotenv
 
+load_dotenv()
 
 DB_URL = URL.create(
     drivername="mysql+pymysql",
-    username="root",
-    password="admin",
-    host="localhost",
-    port=3306,
-    database="ecommerce"
+    username=getenv("DB_USERNAME"),
+    password=getenv("DB_PASSWORD"),
+    host=getenv("DB_HOST"),
+    port=int(getenv("DB_PORT", 3306)),
+    database=getenv("DATABASE")
 )
-# args = {"check_same_thread": False}
+
 engine = create_engine(DB_URL)
 
 def get_session():
