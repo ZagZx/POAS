@@ -5,7 +5,7 @@ from sqlalchemy import URL
 
 
 DB_URL = URL.create(
-    drivername="mysql+mysqldb",
+    drivername="mysql+pymysql",
     username="root",
     password="admin",
     host="localhost",
