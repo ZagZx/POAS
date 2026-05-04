@@ -13,6 +13,11 @@ from schemas.usuario import (
     UsuarioRead,
     UsuarioUpdate
 )
+from schemas.papel import (
+    PapelCreate,
+    PapelRead,
+    PapelUpdate
+)
 
 
 usuario_router = APIRouter(prefix="/usuarios", tags=["Usuário"])
@@ -24,6 +29,17 @@ def listar_usuarios(session: SessionDep):
     ).all()
 
     return usuarios
+
+@usuario_router.get("/{usuario_id}/papeis", response_model=list[PapelRead])
+def listar_papeis_usuario(usuario_id: int, session: SessionDep):
+    usuario = session.get(Usuario, usuario_id)
+
+    if not usuario:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Usuário não encontrado")
+    
+    usuario_papeis = usuario.papeis
+
+    return usuario_papeis 
 
 @usuario_router.get("/{usuario_id}", response_model=UsuarioRead)
 def buscar_usuario(usuario_id: int, session: SessionDep):
