@@ -7,8 +7,8 @@ from sqlmodel import select
 
 from database import SessionDep
 from utils import generate_password_hash, check_password_hash
-from models import (
-    Usuario,
+from models import Usuario
+from schemas.usuario import (
     UsuarioCreate,
     UsuarioRead,
     UsuarioUpdate

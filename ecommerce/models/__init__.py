@@ -1,13 +1,3 @@
-from .usuario import (
-    Usuario,
-    UsuarioCreate,
-    UsuarioRead,
-    UsuarioUpdate
-)
-
-from .papel import (
-    Papel,
-    PapelCreate,
-    PapelRead,
-    PapelUpdate
-)
+from .usuario import Usuario
+from .papel import Papel
+from .usuario_papel import UsuarioPapel

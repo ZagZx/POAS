@@ -1,8 +1,7 @@
-from typing import Optional, TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, TYPE_CHECKING
 
 from .usuario_papel import UsuarioPapel
-
 if TYPE_CHECKING:
     from .usuario import Usuario
 
@@ -14,14 +13,3 @@ class Papel(SQLModel, table=True):
     nome: str = Field(max_length=50, unique=True)
 
     usuarios: list["Usuario"] = Relationship(back_populates="papeis", link_model=UsuarioPapel)
-
-
-class PapelCreate(SQLModel):
-    nome: str = Field(max_length=50)
-
-class PapelUpdate(SQLModel):
-    nome: Optional[str] = Field(default=None, max_length=50)
-
-class PapelRead(SQLModel):
-    id: int
-    nome: str

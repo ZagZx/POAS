@@ -6,9 +6,8 @@ from fastapi import (
 from sqlmodel import select
 
 from database import SessionDep
-from utils import generate_password_hash, check_password_hash
-from models import (
-    Papel,
+from models import Papel
+from schemas.papel import (
     PapelCreate,
     PapelRead,
     PapelUpdate
