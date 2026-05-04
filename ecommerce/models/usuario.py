@@ -1,7 +1,13 @@
-from typing import Optional
-from sqlmodel import SQLModel, Field
+from __future__ import annotations
+from typing import Optional, TYPE_CHECKING
+from sqlmodel import SQLModel, Field, Relationship
 from pydantic import EmailStr
 from datetime import datetime, timezone
+
+from .usuario_papel import UsuarioPapel
+
+if TYPE_CHECKING:
+    from .papel import Papel
 
 
 class Usuario(SQLModel, table=True):
@@ -12,6 +18,9 @@ class Usuario(SQLModel, table=True):
     email: EmailStr = Field(max_length=150, unique=True)
     senha_hash: str = Field(max_length=255)
     criado_em: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    papeis: list[Papel] = Relationship(back_populates="usuarios", link_model=UsuarioPapel)
+
 
 class UsuarioCreate(SQLModel):
     nome: str = Field(max_length=100)
