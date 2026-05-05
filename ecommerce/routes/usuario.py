@@ -3,11 +3,11 @@ from fastapi import (
     status, 
     HTTPException
 )
-from sqlmodel import select
+from sqlmodel import select, col
 
 from database import SessionDep
 from utils import generate_password_hash, check_password_hash
-from models import Usuario
+from models import Usuario, Papel
 from schemas.usuario import (
     UsuarioCreate,
     UsuarioRead,
@@ -17,6 +17,10 @@ from schemas.papel import (
     PapelCreate,
     PapelRead,
     PapelUpdate
+)
+from schemas.usuario_papeis import (
+    UsuarioPapeisRequest,
+    # UsuarioPapeisResponse
 )
 
 
@@ -30,16 +34,6 @@ def listar_usuarios(session: SessionDep):
 
     return usuarios
 
-@usuario_router.get("/{usuario_id}/papeis", response_model=list[PapelRead])
-def listar_papeis_usuario(usuario_id: int, session: SessionDep):
-    usuario = session.get(Usuario, usuario_id)
-
-    if not usuario:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Usuário não encontrado")
-    
-    usuario_papeis = usuario.papeis
-
-    return usuario_papeis 
 
 @usuario_router.get("/{usuario_id}", response_model=UsuarioRead)
 def buscar_usuario(usuario_id: int, session: SessionDep):
@@ -49,6 +43,7 @@ def buscar_usuario(usuario_id: int, session: SessionDep):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Usuário não encontrado")
     
     return usuario
+
 
 @usuario_router.post("", response_model=UsuarioRead, status_code=status.HTTP_201_CREATED)
 def criar_usuario(usuario_json: UsuarioCreate, session: SessionDep):
@@ -78,7 +73,8 @@ def criar_usuario(usuario_json: UsuarioCreate, session: SessionDep):
         print(e)
         session.rollback()
         
-        return HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Erro ao criar usuário")
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Erro ao criar usuário")
+
 
 @usuario_router.patch("/{usuario_id}", response_model=UsuarioRead)
 def atualizar_usuario(usuario_id: int, usuario_json: UsuarioUpdate, session: SessionDep):
@@ -106,13 +102,14 @@ def atualizar_usuario(usuario_id: int, usuario_json: UsuarioUpdate, session: Ses
     try: 
         session.commit()
         session.refresh(usuario)
+        
+        return usuario
     except Exception as e:
         print(e)
         session.rollback()
 
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Erro ao atualizar usuário")
 
-    return usuario
 
 @usuario_router.delete("/{usuario_id}", status_code=status.HTTP_204_NO_CONTENT)
 def deletar_usuario(usuario_id: int, session: SessionDep):
@@ -128,3 +125,59 @@ def deletar_usuario(usuario_id: int, session: SessionDep):
     except Exception as e:
         print(e)
         session.rollback()
+
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Erro ao deletar usuário")
+    
+
+@usuario_router.get("/{usuario_id}/papeis", response_model=list[PapelRead])
+def listar_papeis_usuario(usuario_id: int, session: SessionDep):
+    usuario = session.get(Usuario, usuario_id)
+
+    if not usuario:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Usuário não encontrado")
+    
+    usuario_papeis = usuario.papeis
+
+    return usuario_papeis 
+
+
+@usuario_router.put("/{usuario_id}/papeis", response_model=list[PapelRead])
+def atualizar_papeis_usuario(usuario_id: int, papeis_ids_json: UsuarioPapeisRequest, session: SessionDep):
+    usuario: Usuario = session.get(Usuario, usuario_id)
+    
+    if not usuario:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Usuário não encontrado")
+    
+    papeis_ids = papeis_ids_json.papeis_ids
+    
+    papeis = session.exec(
+        select(Papel).where(col(Papel.id).in_(papeis_ids))
+    ).all()
+
+
+    ids_encontrados = [] 
+    for papel in papeis:
+        ids_encontrados.append(papel.id)
+
+    ids_nao_encontrados = []
+    for papel_id in papeis_ids:
+        if papel_id not in ids_encontrados:
+            ids_nao_encontrados.append(papel_id)
+
+    if ids_nao_encontrados:
+        if len(ids_nao_encontrados) == 1:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, f"O papel de id {ids_nao_encontrados[0]} não foi encontrado portanto nenhuma alteração foi feita")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Os papeis de ids {ids_nao_encontrados} não foram encontrados portanto nenhuma alteração foi feita")
+
+    usuario.papeis = papeis
+
+    try:
+        session.commit()
+        session.refresh(usuario)
+
+        return usuario.papeis
+    except Exception as e:
+        print(e)
+        session.rollback()
+
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Erro ao atualizar os papeis do usuário")
