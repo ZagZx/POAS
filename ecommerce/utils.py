@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timezone
 from pwdlib import PasswordHash
 
 
@@ -9,6 +10,9 @@ def generate_password_hash(password: str):
 
 def check_password_hash(password, password_hashed):
     return password_hash.verify(password, password_hashed)
+
+def get_timestamp_utc_now():
+    return datetime.now(timezone.utc)
 
 def gerar_env():
     if not os.path.exists(".env"):
