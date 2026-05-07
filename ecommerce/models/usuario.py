@@ -8,6 +8,8 @@ from .usuario_papel import UsuarioPapel
 if TYPE_CHECKING:
     from .papel import Papel
     from .pedido import Pedido
+    from .endereco import Endereco
+    from .avaliacao import Avaliacao
 
 
 class Usuario(SQLModel, table=True):
@@ -21,3 +23,5 @@ class Usuario(SQLModel, table=True):
 
     papeis: list["Papel"] = Relationship(back_populates="usuarios", link_model=UsuarioPapel)
     pedidos: list["Pedido"] = Relationship(back_populates="usuario")
+    enderecos: list["Endereco"] = Relationship(back_populates="usuario")
+    avaliacoes: list["Avaliacao"] = Relationship(back_populates="usuario")

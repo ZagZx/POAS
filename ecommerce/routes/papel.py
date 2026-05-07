@@ -64,17 +64,17 @@ def criar_papel(papel_json: PapelCreate, session: SessionDep):
 
 @papel_router.patch("/{papel_id}", response_model=PapelRead)
 def atualizar_papel(papel_id: int, papel_json: PapelUpdate, session: SessionDep):
+    papel = session.get(Papel, papel_id)
+    if not papel:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Papel não encontrado")
+    
     papel_existente = session.exec(
         select(Papel).where(Papel.nome == papel_json.nome)
     ).first()
-
     if papel_existente:
         if papel_existente.nome == papel_json.nome:
             raise HTTPException(status.HTTP_409_CONFLICT, "Já existe um papel com esse nome")
         
-    papel = session.get(Papel, papel_id)
-    if not papel:
-        raise HTTPException(status.HTTP_404_NOT_FOUND)
     
     if papel_json.nome:
         papel.nome = papel_json.nome
@@ -83,13 +83,14 @@ def atualizar_papel(papel_id: int, papel_json: PapelUpdate, session: SessionDep)
     try: 
         session.commit()
         session.refresh(papel)
+
+        return papel
+
     except Exception as e:
         print(e)
         session.rollback()
 
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Erro ao atualizar papel")
-
-    return papel
 
 
 @papel_router.delete("/{papel_id}", status_code=status.HTTP_204_NO_CONTENT)

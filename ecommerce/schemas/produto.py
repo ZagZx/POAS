@@ -10,6 +10,7 @@ class ProdutoCreate(BaseModel):
     nome: str = Field(max_length=150)
     descricao: str 
     preco: Decimal = Field(max_digits=10, decimal_places=2)
+    estoque: int
 
 class ProdutoUpdate(BaseModel):
     nome: Optional[str] = Field(default=None, max_length=150)
