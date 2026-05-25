@@ -25,14 +25,14 @@ pagamento_router = APIRouter(prefix="/pagamentos", tags=["Pagamento"])
 #     return pagamentos
 
 
-@pagamento_router.get("/{pagamento_id}", response_model=PagamentoRead)
-def buscar_pagamento(pagamento_id: int, session: SessionDep):
-    pagamento: Pagamento = session.get(Pagamento, pagamento_id)
+# @pagamento_router.get("/{pagamento_id}", response_model=PagamentoRead)
+# def buscar_pagamento(pagamento_id: int, session: SessionDep):
+#     pagamento: Pagamento = session.get(Pagamento, pagamento_id)
 
-    if not pagamento:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Pagamento não encontrado")
+#     if not pagamento:
+#         raise HTTPException(status.HTTP_404_NOT_FOUND, "Pagamento não encontrado")
     
-    return pagamento
+#     return pagamento
 
 
 @pagamento_router.patch("/{pagamento_id}", response_model=PagamentoRead)

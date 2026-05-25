@@ -14,14 +14,14 @@ from schemas.endereco import (
 
 endereco_router = APIRouter(prefix="/enderecos", tags=["Endereço"])
 
-@endereco_router.get("/{endereco_id}", response_model=EnderecoRead)
-def buscar_endereco(endereco_id: int, session: SessionDep):
-    endereco: Endereco = session.get(Endereco, endereco_id)
+# @endereco_router.get("/{endereco_id}", response_model=EnderecoRead)
+# def buscar_endereco(endereco_id: int, session: SessionDep):
+#     endereco: Endereco = session.get(Endereco, endereco_id)
 
-    if not endereco:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Endereço não encontrado")
+#     if not endereco:
+#         raise HTTPException(status.HTTP_404_NOT_FOUND, "Endereço não encontrado")
     
-    return endereco
+#     return endereco
 
 
 @endereco_router.patch("/{endereco_id}", response_model=EnderecoRead)

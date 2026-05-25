@@ -30,3 +30,6 @@ def gerar_env():
 
         with open(".env", "w") as file:
             file.writelines(lines)
+
+if __name__ == "__main__":
+    print(get_timestamp_utc_now())

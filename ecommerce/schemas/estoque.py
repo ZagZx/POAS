@@ -13,7 +13,7 @@ class EstoqueUpdate(BaseModel):
     quantidade: Optional[int] = Field(default=None)
 
 class EstoqueRead(BaseModel):
-    id: int
-    produto_id: int
+    # id: int
+    # produto_id: int
     quantidade: int
     atualizado_em: datetime
