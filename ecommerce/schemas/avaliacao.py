@@ -11,8 +11,8 @@ class AvaliacaoCreate(BaseModel):
     comentario: Optional[str] = Field(default=None)
 
 class AvaliacaoUpdate(BaseModel):
-    nota: Optional[int]
-    comentario: Optional[str]
+    nota: Optional[int] = Field(default=None)
+    comentario: Optional[str] = Field(default=None)
 
 class AvaliacaoRead(BaseModel):
     id: int
