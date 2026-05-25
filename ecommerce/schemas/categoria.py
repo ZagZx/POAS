@@ -1,7 +1,5 @@
 from sqlmodel import Field 
 from typing import Optional
-from decimal import Decimal
-from datetime import datetime
 
 from .base import BaseModel
 
