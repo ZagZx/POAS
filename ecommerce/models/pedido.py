@@ -4,9 +4,11 @@ from decimal import Decimal
 from datetime import datetime
 
 from utils import get_timestamp_utc_now
+from .item_pedido import ItemPedido
 if TYPE_CHECKING:
     from .usuario import Usuario
     from .pagamento import Pagamento
+    from .produto import Produto
 
 class Pedido(SQLModel, table=True):
     __tablename__ = "pedidos"
@@ -19,3 +21,4 @@ class Pedido(SQLModel, table=True):
 
     usuario: "Usuario" = Relationship(back_populates="pedidos")
     pagamentos: list["Pagamento"] = Relationship(back_populates="pedido")
+    itens: list["Produto"] = Relationship(back_populates="pedidos", link_model=ItemPedido)

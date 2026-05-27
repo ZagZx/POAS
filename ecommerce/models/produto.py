@@ -7,6 +7,7 @@ from utils import get_timestamp_utc_now
 if TYPE_CHECKING:
     from .avaliacao import Avaliacao
     from .estoque import Estoque
+    from .pedido import Pedido
 
 
 class Produto(SQLModel, table=True):
@@ -20,3 +21,4 @@ class Produto(SQLModel, table=True):
 
     avaliacoes: list["Avaliacao"] = Relationship(back_populates="produto")
     estoque: "Estoque" = Relationship(back_populates="produto")
+    pedidos: list["Pedido"] = Relationship(back_populates="itens")
