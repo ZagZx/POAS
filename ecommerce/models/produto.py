@@ -4,6 +4,7 @@ from decimal import Decimal
 from datetime import datetime
 
 from utils import get_timestamp_utc_now
+from .item_pedido import ItemPedido
 if TYPE_CHECKING:
     from .avaliacao import Avaliacao
     from .estoque import Estoque
@@ -21,4 +22,4 @@ class Produto(SQLModel, table=True):
 
     avaliacoes: list["Avaliacao"] = Relationship(back_populates="produto")
     estoque: "Estoque" = Relationship(back_populates="produto")
-    pedidos: list["Pedido"] = Relationship(back_populates="itens")
+    pedidos: list["Pedido"] = Relationship(back_populates="itens", link_model=ItemPedido)

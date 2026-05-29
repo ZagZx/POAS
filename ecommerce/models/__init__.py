@@ -8,3 +8,4 @@ from .pagamento import Pagamento
 from .endereco import Endereco
 from .avaliacao import Avaliacao
 from .estoque import Estoque
+from .item_pedido import ItemPedido
