@@ -1,4 +1,5 @@
 import os
+import secrets
 from datetime import datetime, timezone
 from pwdlib import PasswordHash
 
@@ -21,7 +22,9 @@ def gerar_env():
             "DB_PASSWORD": "admin",
             "DB_HOST": "localhost",
             "DB_PORT": 3306,
-            "DATABASE": "ecommerce"
+            "DATABASE": "ecommerce",
+            "ALGORITHM": "HS256",
+            "SECRET_KEY": secrets.token_hex(32), 
         }
         
         lines = []

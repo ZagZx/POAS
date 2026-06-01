@@ -6,3 +6,4 @@ from .pedido import pedido_router
 from .pagamento import pagamento_router
 from .endereco import endereco_router
 from .avaliacao import avaliacao_router
+from .login import login_router

@@ -10,7 +10,9 @@ from routes import (
     pedido_router,
     pagamento_router,
     endereco_router,
-    avaliacao_router
+    avaliacao_router,
+    login_router
+
 )
 
 gerar_env()
@@ -19,6 +21,7 @@ app = FastAPI()
 
 app.include_router(papel_router)
 app.include_router(usuario_router)
+app.include_router(login_router)
 app.include_router(endereco_router)
 app.include_router(categoria_router)
 app.include_router(produto_router)
